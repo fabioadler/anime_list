@@ -66,8 +66,8 @@ class MeusAnimes():
                                     expand=True,
                                     col={
                                         "xs":10,
-                                        "sm":5,
-                                        "md":4
+                                        "sm":8,
+                                        "md":6
                                     },
                                     content=ft.Column(
                                         expand=True,
