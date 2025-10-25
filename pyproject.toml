@@ -1,7 +1,7 @@
 [project]
-name = "anime_list"
-version = "0.1.0"
-description = ""
+name = "AnimeList"
+version = "0.1.1"
+description = "AnimeList e um app com foco em animes"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [
@@ -24,11 +24,11 @@ adaptive_icon_background = "#FFFFFF"
 [tool.flet]
 # org name in reverse domain name notation, e.g. "com.mycompany".
 # Combined with project.name to build bundle ID for iOS and Android apps
-org = "com.aiterne.anime_list"
+org = "com.Aiterne.AnimeList"
 
 # project display name that is used as an app title on Android and iOS home screens,
 # shown in window titles and about app dialogs on desktop.
-product = "anime-list"
+product = "AnimeList"
 
 # company name to display in about app dialogs
 company = "Aiterne"
