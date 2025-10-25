@@ -9,6 +9,8 @@ class AnimeList():
         self.page=page
         self.page.title="AnimeList"
         self.page.window.icon="favicon.ico"
+        self.page.window.maximized=False
+        #self.page.window.title_bar_hidden=True
         self.cor_vermelha="#BE0B32"
         self.cor_branca="#ffffff"
         self.cor_preta="#000000"
@@ -16,6 +18,7 @@ class AnimeList():
         self.page.padding=0
         self.page.spacing=0
         self.page.scroll=ft.ScrollMode.ALWAYS
+        self.page.update()
         self.get_animes()
         self.list_anime =[]
         for anime in self.animes:
@@ -28,7 +31,9 @@ class AnimeList():
                     height=260,
                     col={
                         "xs":11,
-                        "md":3
+                        "sm":6,
+                        "md":4,
+                        "lg":3
                     },
                     bgcolor=self.cor_vermelha,
                     border_radius=20,
@@ -86,7 +91,8 @@ class AnimeList():
                         ft.Container(
                             padding=ft.Padding(top=10,bottom=10,left=0,right=0),
                             col={
-                                "xs":6,
+                                "xs":11,
+                                "sm":8,
                                 "md":4
                             },
                             content=ft.Text(
