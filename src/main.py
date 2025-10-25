@@ -78,6 +78,7 @@ class AnimeList():
                     )
                 )
             )
+
         self.conteudo = ft.Column(
             width=self.page.width,
             expand=True,
@@ -135,7 +136,7 @@ class AnimeList():
 
     def get_animes(self):
         self.url="https://www.anroll.net"
-        self.pag=bs(requests.get(self.url).text,"html.parser")
+        self.pag=bs(requests.get("https://www.anroll.net/lancamentos").text,"html.parser")
         self.conteudo=self.pag.find_all("li",{"class":"sc-bpSLYx fRpZuV release-item"})
         self.animes=[]
         for c in self.conteudo:
