@@ -9,6 +9,7 @@ class AnimeList():
         self.page=page
         self.page.title="AnimeList"
         self.page.window.icon="favicon.ico"
+        self.headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
         self.page.window.maximized=False
         #self.page.window.title_bar_hidden=True
         self.cor_vermelha="#BE0B32"
@@ -70,7 +71,7 @@ class AnimeList():
 
     def get_animes(self):
         self.url="https://www.anroll.net"
-        self.pag=bs(requests.get(self.url).text,"html.parser")
+        self.pag=bs(requests.get(f"{self.url}/lancamentos",headers=self.headers).text,"html.parser")
         self.conteudo=self.pag.find_all("li",{"class":"sc-bpSLYx fRpZuV release-item"})
         self.animes=[]
         for c in self.conteudo:
@@ -191,7 +192,10 @@ class AnimeList():
 
     def image_web(self,url):
         png_output=BytesIO()
-        (Image.open(BytesIO(requests.get(url,headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}).content))).save(png_output, format="PNG")
+        try:
+            (Image.open(BytesIO(requests.get(url,headers=self.headers).content))).save(png_output, format="PNG")
+        except:
+            (Image.open("imagenotfound.png")).save(png_output, format="PNG")
         png_output.seek(0)
         return base64.b64encode(png_output.read()).decode('utf-8')
     
