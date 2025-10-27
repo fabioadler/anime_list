@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup as bs
 from PIL import Image
 from io import BytesIO
 import flet as ft
-import requests,base64,time
+import requests,base64,threading
 
 class AnimeList():
     def __init__(self,page:ft.Page):
@@ -18,15 +18,68 @@ class AnimeList():
         self.page.padding=0
         self.page.spacing=0
         self.page.scroll=ft.ScrollMode.ALWAYS
+        self.conteudo = ft.Column(
+            width=self.page.width,
+            expand=True,
+            spacing=0,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            controls=[
+                ft.ResponsiveRow(
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                    controls=[
+                        ft.Container(
+                            padding=ft.Padding(top=10,bottom=10,left=0,right=0),
+                            col={
+                                "xs":11,
+                                "sm":8,
+                                "md":4
+                            },
+                            content=ft.Text(
+                                value="AnimeList",
+                                text_align=ft.TextAlign.CENTER,
+                                weight=ft.FontWeight.BOLD,
+                                size=40,
+                                color=self.cor_branca,
+                            )
+                        ),
+                        ft.Container(
+                            padding=ft.Padding(top=10,bottom=10,left=0,right=0),
+                            col={
+                                "xs":2,
+                                "md":1
+                            },
+                            content=ft.Image(
+                                src="favicon.png"
+                            )
+                        )
+                    ]
+                )
+            ]
+        )
+        self.page.on_resized=self.resize_home
+        self.page.add(
+            self.conteudo
+        )
         self.page.update()
-        self.get_animes()
-        self.list_anime =[]
-        for anime in self.animes:
-            ani = anime.split("|")
-            self.list_anime.append(
+        threading.Thread(target=self.get_animes).start()
+
+    def resize_home(self,e):
+        self.conteudo.width=self.page.width
+        self.page.update()    
+
+    def get_animes(self):
+        self.url="https://www.anroll.net"
+        self.pag=bs(requests.get("https://www.anroll.net/lancamentos").text,"html.parser")
+        self.conteudo=self.pag.find_all("li",{"class":"sc-bpSLYx fRpZuV release-item"})
+        self.animes=[]
+        for c in self.conteudo:
+            a=str(c.find("a")).split('"')[1]
+            img=str(c.find("img")).split('>')[0].split('"')[len(str(c.find("img")).split('"'))-6].split(",")[0].replace("&amp;w=256&amp;q=75 1x","&w=384&q=75").replace("&amp;w=256&amp;q=75 2x","&w=384&q=75")
+            self.animes.append(
                 ft.Container(
                     ink=True,
-                    url=ani[0],
+                    url=f"{self.url}{a}",
                     padding=10,
                     height=260,
                     col={
@@ -37,7 +90,7 @@ class AnimeList():
                     },
                     bgcolor=self.cor_vermelha,
                     border_radius=20,
-                    tooltip=ani[2],
+                    tooltip=f"{(c.text).replace("Episódio"," Epiósido")}",
                     content=ft.Column(
                         expand=True,
                         alignment=ft.MainAxisAlignment.CENTER,
@@ -52,7 +105,7 @@ class AnimeList():
                                         },
                                         border_radius=20,
                                         content=ft.Image(
-                                            src_base64=self.image_web(ani[1]),
+                                            src_base64=self.image_web(f"{self.url}{img}"),
                                             fit=ft.ImageFit.COVER,
                                             height=180
                                         )
@@ -68,7 +121,7 @@ class AnimeList():
                                         },
                                         padding=ft.Padding(top=10,bottom=0,left=0,right=0),
                                         content=ft.Text(
-                                            value=ani[2][0:60],
+                                            value=f"{(c.text).replace("Episódio"," Epiósido")}"[0:60],
                                             text_align=ft.TextAlign.CENTER
                                         )
                                     )
@@ -124,25 +177,17 @@ class AnimeList():
                     content=ft.ResponsiveRow(
                         alignment=ft.MainAxisAlignment.START,
                         vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                        controls=self.list_anime
+                        controls=self.animes
                     )
                 )
             ]
         )
+        self.page.clean()
+        self.page.on_resized=self.resize_home
         self.page.add(
             self.conteudo
         )
         self.page.update()
-
-    def get_animes(self):
-        self.url="https://www.anroll.net"
-        self.pag=bs(requests.get("https://www.anroll.net/lancamentos").text,"html.parser")
-        self.conteudo=self.pag.find_all("li",{"class":"sc-bpSLYx fRpZuV release-item"})
-        self.animes=[]
-        for c in self.conteudo:
-            a=str(c.find("a")).split('"')[1]
-            img=str(c.find("img")).split('>')[0].split('"')[len(str(c.find("img")).split('"'))-6].split(",")[0].replace("&amp;w=256&amp;q=75 1x","&w=384&q=75").replace("&amp;w=256&amp;q=75 2x","&w=384&q=75")
-            self.animes.append(f"{self.url}{a}|{self.url}{img}|{(c.text).replace("Episódio"," Epiósido")}")
 
     def image_web(self,url):
         png_output=BytesIO()
