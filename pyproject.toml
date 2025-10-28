@@ -20,6 +20,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.flet.android]
 adaptive_icon_background = "#FFFFFF"
+min_sdk_version = 29
 
 [tool.flet]
 # org name in reverse domain name notation, e.g. "com.mycompany".
@@ -50,5 +51,8 @@ package-mode = false
 [tool.poetry.group.dev.dependencies]
 flet = {extras = ["all"], version = "0.28.3"}
 
-[tool.flet.flutter.pubspec.dependency_overrides]
-webview_flutter_android = "4.10.1"
+#[tool.flet.flutter.pubspec.dependency_overrides]
+#webview_flutter_android = "4.10.1"
+
+[tool.flet.android.permissions]
+internet = true
